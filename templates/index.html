@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assistance Program Eligibility Check</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const progressBar = document.querySelector('[data-progress-bar]');
+            if (progressBar) {
+                const score = progressBar.getAttribute('data-score');
+                progressBar.style.width = score + '%';
+            }
+        });
+    </script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-4">Assistance Program Eligibility Check</h1>
+        <p class="text-center text-gray-600 mb-8 max-w-2xl mx-auto">This tool helps you understand your potential eligibility for various assistance programs. Your information is kept private and is used only for eligibility assessment.</p>
+        
+        <!-- Information Form -->
+        <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-6">
+            <form method="POST" class="space-y-6">
+                <!-- Age -->
+                <div>
+                    <label for="age" class="block text-sm font-medium text-gray-700">Age</label>
+                    <input type="number" name="age" id="age" required min="18" max="100"
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                </div>
+
+                <!-- Education Level -->
+                <div>
+                    <label for="education_level" class="block text-sm font-medium text-gray-700">Education Level</label>
+                    <select name="education_level" id="education_level" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        <option value="some_high_school">Some High School</option>
+                        <option value="high_school">High School</option>
+                        <option value="some_college">Some College</option>
+                        <option value="associates">Associate's Degree</option>
+                        <option value="bachelors">Bachelor's Degree</option>
+                        <option value="masters">Master's Degree</option>
+                        <option value="phd">PhD</option>
+                    </select>
+                </div>
+
+                <!-- Employment Status -->
+                <div>
+                    <label for="employment_status" class="block text-sm font-medium text-gray-700">Employment Status</label>
+                    <select name="employment_status" id="employment_status" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        <option value="employed">Employed</option>
+                        <option value="part_time">Part Time</option>
+                        <option value="unemployed">Unemployed</option>
+                        <option value="retired">Retired</option>
+                        <option value="disabled">Disabled</option>
+                    </select>
+                </div>
+
+                <!-- Household Size -->
+                <div>
+                    <label for="household_size" class="block text-sm font-medium text-gray-700">Household Size</label>
+                    <input type="number" name="household_size" id="household_size" required min="1" max="15"
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                </div>
+
+                <!-- Dependents -->
+                <div>
+                    <label for="dependents" class="block text-sm font-medium text-gray-700">Number of Dependents</label>
+                    <input type="number" name="dependents" id="dependents" required min="0" max="10"
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                </div>
+
+                <!-- Housing Type -->
+                <div>
+                    <label for="housing_type" class="block text-sm font-medium text-gray-700">Housing Type</label>
+                    <select name="housing_type" id="housing_type" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        <option value="owned">Owned</option>
+                        <option value="rented">Rented</option>
+                    </select>
+                </div>
+
+                <!-- Annual Income -->
+                <div>
+                    <label for="annual_income" class="block text-sm font-medium text-gray-700">Annual Income</label>
+                    <input type="number" name="annual_income" id="annual_income" required min="0"
+                           class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                </div>
+
+                <!-- Location Type -->
+                <div>
+                    <label for="urban_rural" class="block text-sm font-medium text-gray-700">Location Type</label>
+                    <select name="urban_rural" id="urban_rural" required
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        <option value="urban">Urban</option>
+                        <option value="suburban">Suburban</option>
+                        <option value="rural">Rural</option>
+                    </select>
+                </div>
+
+                <!-- Submit Button -->
+                <div>
+                    <button type="submit"
+                            class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        Check Eligibility
+                    </button>
+                </div>
+            </form>
+
+            <!-- Results Section -->
+            {% if result %}
+            <div class="mt-8 space-y-6">
+                <!-- Main Result -->
+                <div class="p-4 border rounded-lg {% if result.eligibility_score >= 50 %}bg-blue-50 border-blue-200{% else %}bg-gray-50 border-gray-200{% endif %}">
+                    <h2 class="text-xl font-semibold mb-2 {% if result.eligibility_score >= 50 %}text-blue-800{% else %}text-gray-800{% endif %}">Program Eligibility Assessment</h2>
+                    <p class="text-gray-700">{{ result.message }}</p>
+                    <div class="mt-4">
+                        <div class="relative pt-1">
+                            <div class="flex mb-2 items-center justify-between">
+                                <div>
+                                    <span class="text-xs font-semibold inline-block py-1 px-2 uppercase rounded-full {% if result.eligibility_score >= 50 %}text-blue-600 bg-blue-200{% else %}text-gray-600 bg-gray-200{% endif %}">
+                                        Eligibility Score
+                                    </span>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-xs font-semibold inline-block {% if result.eligibility_score >= 50 %}text-blue-600{% else %}text-gray-600{% endif %}">
+                                        {{ result.eligibility_score }}%
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="overflow-hidden h-2 mb-4 text-xs flex rounded bg-gray-200">
+                                <div data-progress-bar data-score="{{ result.eligibility_score }}" 
+                                     class="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center {% if result.eligibility_score >= 50 %}bg-blue-500{% else %}bg-gray-500{% endif %}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Download PDF Button -->
+                    <div class="mt-4">
+                        <a href="{{ url_for('download_report', filename=result.pdf_report) }}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                            </svg>
+                            Download PDF Report
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Recommendations -->
+                {% if result.recommendations %}
+                <div class="p-4 border rounded-lg bg-white">
+                    <h3 class="text-lg font-semibold mb-3 text-gray-800">Available Resources & Next Steps</h3>
+                    <ul class="space-y-2">
+                        {% for recommendation in result.recommendations %}
+                        <li class="flex items-start">
+                            <svg class="h-5 w-5 text-blue-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span class="text-gray-700">{{ recommendation }}</span>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% endif %}
+
+                <!-- Privacy Notice -->
+                <div class="text-sm text-gray-500 mt-4">
+                    <p>This assessment is based on the information provided and serves as a general guide. Actual eligibility for specific programs may vary. We encourage you to contact your local social services office for detailed information about available programs and application processes.</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
